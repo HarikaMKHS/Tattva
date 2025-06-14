@@ -1277,6 +1277,11 @@ section,
 .features .tab-pane p:last-child {
   margin-bottom: 0;
 }
+.features .tab-pane img {
+  width: 100%;         /* Keep full width */
+  height: 400px;       /* Adjust height to your need */
+  object-fit: cover;   /* Ensures the image fills the area neatly */
+}
 
 /*--------------------------------------------------------------
 # Services 2 Section
@@ -1844,3 +1849,8 @@ section,
 .starter-section {
   /* Add your styles here */
 }
+
+
+
+
+
