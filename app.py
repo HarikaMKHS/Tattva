@@ -10,6 +10,7 @@ from models import db, ClientDashboard, User
 from werkzeug.utils import secure_filename
 from datetime import datetime
 from sqlalchemy.pool import QueuePool
+from flask import send_file
 
 
 
@@ -374,7 +375,7 @@ def home():
     return render_template("index.html")
 @app.route('/login-client')
 def login_client():
-    return render_template('public/login-client.html')
+    return send_file('login-client.html')
 
 
 with app.app_context():
