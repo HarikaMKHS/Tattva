@@ -374,7 +374,7 @@ def home():
     return render_template("index.html")
 @app.route('/login-client')
 def login_client():
-    return render_template('login-client.html')
+    return render_template('public/login-client.html')
 
 
 with app.app_context():
