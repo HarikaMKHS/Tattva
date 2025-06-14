@@ -14,7 +14,7 @@ try {
     $mail->SMTPAuth = true;
     $mail->Username = '8f8c59001@smtp-brevo.com';
     $mail->Password =  getenv("SMTP_PASSWORD");;
-    $mail->SMTPSecure = 'tls';
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
     $mail->Port = 587;
 
     $mail->setFrom('8f8c59001@smtp-brevo.com', 'Tattva Advisory');
