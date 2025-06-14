@@ -9,6 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 from models import db, ClientDashboard, User
 from werkzeug.utils import secure_filename
 from datetime import datetime
+from sqlalchemy.pool import QueuePool
 
 
 
@@ -16,8 +17,15 @@ from datetime import datetime
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://neondb_owner:npg_6jtIqEBw5Yvp@ep-shy-river-a8ju7x65-pooler.eastus2.azure.neon.tech/Login-client?sslmode=require'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    "poolclass": QueuePool,
+    "pool_size": 5,
+    "max_overflow": 10,
+    "pool_timeout": 30,
+    "pool_recycle": 1800
+}
 db.init_app(app)
 #db = SQLAlchemy(app)
 @app.route('/register-user', methods=['POST'])
@@ -52,7 +60,8 @@ def validate_client():
     if not username or not password:
         return jsonify({"success": False, "message": "Username and password required"}), 400
 
-    user = User.query.filter_by(username=username).first()
+    user = User.query.with_entities(User.username, User.password).filter_by(username=username).first()
+
     if user and user.check_password(password):
         return jsonify({"success": True})
     else:
@@ -351,6 +360,13 @@ def show_tables():
         ]
     })
 
+@app.route('/ping')
+def ping():
+    try:
+        db.session.execute("SELECT 1")
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
 
 
 @app.route('/')
