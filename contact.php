@@ -1,6 +1,6 @@
 <?php
-  /**
-  * Requires the "PHP Email Form" library
+
+  /**  * Requires the "PHP Email Form" library
   * The "PHP Email Form" library is available only in the pro version of the template
   * The library should be uploaded to: vendor/php-email-form/php-email-form.php
   * For more info and help: https://bootstrapmade.com/php-email-form/
@@ -38,4 +38,22 @@
   $contact->add_message( $_POST['message'], 'Message', 10);
 
   echo $contact->send();
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  $name = $_POST["name"];
+  $email = $_POST["email"];
+  $subject = $_POST["subject"];
+  $message = $_POST["message"];
+
+  $to = "harika@tattvainvestmentadvisory.com";
+  $headers = "From: $email";
+  $fullMessage = "From: $name\nEmail: $email\n\nMessage:\n$message";
+
+  if (mail($to, $subject, $fullMessage, $headers)) {
+    echo "Message sent successfully!";
+  } else {
+    echo "Failed to send message.";
+  }
+}
+
 ?>
