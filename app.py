@@ -371,7 +371,8 @@ def ping():
 
 @app.route('/')
 def home():
-    return "Flask App is Running!"
+    return render_template("index.html")
+
 
 with app.app_context():
     db.create_all()
