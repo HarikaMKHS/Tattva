@@ -15,7 +15,7 @@ from flask import send_file
 
 
 
-app = Flask(__name__)
+app = Flask(__name__,template_folder='.')
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
