@@ -1,59 +1,42 @@
 <?php
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
-  /**  * Requires the "PHP Email Form" library
-  * The "PHP Email Form" library is available only in the pro version of the template
-  * The library should be uploaded to: vendor/php-email-form/php-email-form.php
-  * For more info and help: https://bootstrapmade.com/php-email-form/
-  */
+require 'PHPMailer/src/Exception.php';
+require 'PHPMailer/src/PHPMailer.php';
+require 'PHPMailer/src/SMTP.php';
 
-  // Replace contact@example.com with your real receiving email address
-  $receiving_email_address = 'contact@example.com';
+$mail = new PHPMailer(true);
 
-  if( file_exists($php_email_form = '../assets/vendor/php-email-form/php-email-form.php' )) {
-    include( $php_email_form );
-  } else {
-    die( 'Unable to load the "PHP Email Form" Library!');
-  }
+try {
+    $mail->isSMTP();
+    $mail->Host = 'smtp-relay.brevo.com';
+    $mail->SMTPAuth = true;
+    $mail->Username = '8f8c59001@smtp-brevo.com';
+    $mail->Password =  getenv("SMTP_PASSWORD");;
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Port = 587;
 
-  $contact = new PHP_Email_Form;
-  $contact->ajax = true;
-  
-  $contact->to = $receiving_email_address;
-  $contact->from_name = $_POST['name'];
-  $contact->from_email = $_POST['email'];
-  $contact->subject = $_POST['subject'];
+    $mail->setFrom('8f8c59001@smtp-brevo.com', 'Tattva Advisory');
+    $mail->addAddress('harika@tattvainvestmentadvisory.com');
 
-  // Uncomment below code if you want to use SMTP to send emails. You need to enter your correct SMTP credentials
-  /*
-  $contact->smtp = array(
-    'host' => 'example.com',
-    'username' => 'example',
-    'password' => 'pass',
-    'port' => '587'
-  );
-  */
+    $mail->isHTML(true);
+    $mail->Subject = 'New Message from Contact Form';
 
-  $contact->add_message( $_POST['name'], 'From');
-  $contact->add_message( $_POST['email'], 'Email');
-  $contact->add_message( $_POST['message'], 'Message', 10);
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $message = $_POST['message'];
 
-  echo $contact->send();
+    $mail->Body = "
+        <h3>Contact Form Submission</h3>
+        <p><strong>Name:</strong> {$name}</p>
+        <p><strong>Email:</strong> {$email}</p>
+        <p><strong>Message:</strong><br>{$message}</p>
+    ";
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  $name = $_POST["name"];
-  $email = $_POST["email"];
-  $subject = $_POST["subject"];
-  $message = $_POST["message"];
-
-  $to = "harika@tattvainvestmentadvisory.com";
-  $headers = "From: $email";
-  $fullMessage = "From: $name\nEmail: $email\n\nMessage:\n$message";
-
-  if (mail($to, $subject, $fullMessage, $headers)) {
+    $mail->send();
     echo "Message sent successfully!";
-  } else {
-    echo "Failed to send message.";
-  }
+} catch (Exception $e) {
+    echo "Message failed. Error: {$mail->ErrorInfo}";
 }
-
 ?>
